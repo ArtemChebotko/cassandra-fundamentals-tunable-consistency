@@ -16,14 +16,14 @@
             <div class="scenario-description">Learn how to create a keyspace and select a data replication strategy for a Cassandra NoSQL database.</div>
             <ul>
               <li><span class="scenario-description-attribute">Difficulty</span>: Beginner</li>
-              <li><span class="scenario-description-attribute">Time</span>: 10 minutes</li>
+              <li><span class="scenario-description-attribute">Time</span>: 15 minutes</li>
             </ul>
             <div class="scenario-objectives">In this hands-on lab, you will:</div>
             <ul>
-              <li><span class="scenario-objective">Create keyspaces using the CQL <code>CREATE KEYSPACE</code> statement</span></li>
-              <li><span class="scenario-objective">Understand data replication strategies <code>SimpleStrategy</code> and <code>NetworkTopologyStrategy</code></span></li>
-              <li><span class="scenario-objective">Learn how to select a data replication strategy and replication factor</span></li>
-              <li><span class="scenario-objective">Practice several useful CQL statements and CQL shell commands that work with keyspaces</span></li>              
+              <li><span class="scenario-objective">Learn about tunable consistency and consistency levels</span></li>
+              <li><span class="scenario-objective">Use the CQL shell <code>CONSISTENCY</code> command to get and set consistency levels</span></li>
+              <li><span class="scenario-objective">Experiment with consistency levels <code>ONE</code>, <code>TWO</code>, <code>THREE</code>, <code>LOCAL_ONE</code>, <code>QUORUM</code>, <code>LOCAL_QUORUM</code>, and <code>EACH_QUORUM</code></span></li>
+              <li><span class="scenario-objective">Understand how to choose appropriate consistency levels to meet your application requirements</span></li>
             </ul>
       </div>
      </div>

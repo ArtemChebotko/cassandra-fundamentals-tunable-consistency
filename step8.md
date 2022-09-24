@@ -20,38 +20,25 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Working with keyspaces</div>
+<div class="step-title">Choosing consistency levels</div>
 
-Try the following five CQL shell commands and CQL statements that are applicable to keyspaces. 
+For critical transactions, you should prefer *strong consistency*, which guarantees that 
+all acknowledged writes are visible to subsequent reads. To achieve this, choose write and read consistency levels 
+such that the write and read replica sets overlap. This simple inequality should be valid: 
 
-✅ List the names of all keyspaces in the cluster:
-```
-DESCRIBE KEYSPACES;
-```
+`number_of_read_replicas + number_of_write_replicas > sum_of_replication_factors`
 
-✅ Output all CQL statements that can be used to recreate the given keyspace
-and all the schema objects that belong to it:
-```
-DESCRIBE KEYSPACE production_keyspace_2;
-```
+If `QUORUM` is used for both reads and writes, you are guaranteed to have strong consistency. For example, 
+for our cluster with replication factors `1` and `3` for *DC-London* and *DC-Paris*, `QUORUM` means `(1 + 3) / 2 + 1 = 3` replicas and 
+the inequality holds `3 + 3 > 1 + 3`. In our cluster, we can similarly achieve strong consistency by using `QUORUM` for writes and `TWO` for reads.  
 
-✅ Alter properties of the given keyspace:
-```
-ALTER KEYSPACE production_keyspace_2
-WITH replication = 
-     {'class': 'NetworkTopologyStrategy',
-      'DC-West': 3, 'DC-East': 5};
-```
+With multiple datacenters, especially when datacenters serve different geographical locations, your application may prefer to only wait for responses 
+from replicas in a local datacenter to avoid potentially higher network latencies for replicas in remote datacenters. In this case, 
+`LOCAL_QUORUM` for both writes and reads can still guarantee strong consistency within the same datacenter, even though it 
+will be a weaker guarantee for applications accessing data in other datacenters. 
 
-✅ Set the given keyspace as the current working keyspace:
-```
-USE production_keyspace_2;
-```
-
-✅ Remove the given keyspace and all the objects that belong to it:
-```
-DROP KEYSPACE production_keyspace_1;
-```
+Finally, less critical transactions that do not require strong consistency 
+should prefer lower consistency levels, such as `ONE` and `LOCAL_ONE` to greatly improve response time, throughput and availability. 
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

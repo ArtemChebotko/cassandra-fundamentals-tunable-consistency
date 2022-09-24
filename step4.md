@@ -20,34 +20,34 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Keyspaces with SimpleStrategy</div>
+<div class="step-title">Create a keyspace and a table</div>
 
-✅ Create a keyspace with name `simple_keyspace_1` that uses `SimpleStrategy` and a replication factor of `1`:
+To demonstrate how availability can be affected by different consistency levels, we can create 
+a keyspace that prescribes to have more replicas than the number of nodes in the cluster. Let's 
+use replication factors `1` and `3` for *DC-London* and *DC-Paris*, respectively. You can think of this 
+situation as if we lost two replicas in *DC-Paris* due to a natural disaster ... will we still be able to write and read data?
 
+✅ Create the keyspace:
 ```
-CREATE KEYSPACE simple_keyspace_1
-WITH replication = {'class': 'SimpleStrategy', 
-                    'replication_factor': 1};
-```
+CREATE KEYSPACE ks_tunable_consistency
+WITH replication = {
+  'class': 'NetworkTopologyStrategy', 
+  'DC-London': 1,
+  'DC-Paris': 3 };
 
-The `replication_factor` option specifies a replication factor for the entire cluster. 
-That means that `SimpleStrategy` does not respect datacenter layouts and, therefore, is not a good choice 
-for production. 
-
-
-✅ Create a keyspace with name `simple_keyspace_2` that uses `SimpleStrategy` and a replication factor of `2`.
-Use tab completion in `cqlsh` to your advantage.
-
-<details>
-  <summary>Solution</summary>
-
-```
-CREATE KEYSPACE simple_keyspace_2
-WITH replication = {'class': 'SimpleStrategy', 
-                    'replication_factor': 2};
+USE ks_tunable_consistency;
 ```
 
-</details>
+✅ Create the table:
+```
+CREATE TABLE users (
+  email TEXT,
+  name TEXT,
+  age INT,
+  date_joined DATE,
+  PRIMARY KEY ((email))
+);
+```
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

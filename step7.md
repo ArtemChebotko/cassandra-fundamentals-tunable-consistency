@@ -20,38 +20,47 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Working with keyspaces</div>
+<div class="step-title">QUORUM, LOCAL_QUORUM, EACH_QUORUM</div>
 
-Try the following five CQL shell commands and CQL statements that are applicable to keyspaces. 
-
-✅ List the names of all keyspaces in the cluster:
+Let's experiment with these consistency levels and see why 
+they can or cannot be satisfied.
+ 
+✅ Retrive a row using CL `QUORUM`:
 ```
-DESCRIBE KEYSPACES;
-```
-
-✅ Output all CQL statements that can be used to recreate the given keyspace
-and all the schema objects that belong to it:
-```
-DESCRIBE KEYSPACE production_keyspace_2;
+CONSISTENCY QUORUM;
+SELECT * FROM users WHERE email = 'joe@datastax.com';
 ```
 
-✅ Alter properties of the given keyspace:
+CL `QUORUM` could not be satisfied because the cluster does not have three (`(1 + 3) / 2 + 1`) replicas to respond.
+
+
+✅ Retrive a row using CL `LOCAL_QUORUM`:
+<details>
+  <summary>Solution</summary>
+
 ```
-ALTER KEYSPACE production_keyspace_2
-WITH replication = 
-     {'class': 'NetworkTopologyStrategy',
-      'DC-West': 3, 'DC-East': 5};
+CONSISTENCY LOCAL_QUORUM;
+SELECT * FROM users WHERE email = 'joe@datastax.com';
 ```
 
-✅ Set the given keyspace as the current working keyspace:
+CL `LOCAL_QUORUM` was satisfied by the only replica in local datacenter *DC-London*. One (`1 / 2 + 1`) response wa required.
+
+</details>
+
+<br/>
+
+✅ Retrive a row using CL `EACH_QUORUM`:
+<details>
+  <summary>Solution</summary>
+
 ```
-USE production_keyspace_2;
+CONSISTENCY EACH_QUORUM;
+SELECT * FROM users WHERE email = 'joe@datastax.com';
 ```
 
-✅ Remove the given keyspace and all the objects that belong to it:
-```
-DROP KEYSPACE production_keyspace_1;
-```
+CL `EACH_QUORUM` could not be satisfied because datacenter *DC-Paris* does not have two (`3 / 2 + 1`) replicas to respond.
+
+</details>
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

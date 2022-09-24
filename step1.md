@@ -20,24 +20,27 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Keyspace</div>
+<div class="step-title">Tunable consistency</div>
 
-A *keyspace* is a namespace for a set of tables sharing a data replication strategy and some options. 
-It is conceptually similar to a "database" in a relational database management system. 
-Tables, materialized views, indexes and other schema objects are always defined within a keyspace.
+Each keyspace in Cassandra has a data replication strategy, which prescribes 
+how data should be replicated. There usually exist 
+multiple copies of the same data stored on different nodes in a cluster.
+However, in the real world, nodes fail, go down, get replaced, go back up, become less responsive, 
+and so forth. While some replicas may become unavailable, other replicas may just be temporarily out-of-sync. Given such 
+conditions, will 
+your application still be able to access data? Can it tolerate the risk of reading inconsistent or stale data? 
+ 
+The answer lies in *tunable consistency*. *Tunable consistency* is a mechanism that enables a per-operation tradeoff between *consistency* and 
+*availability*. For example, for some writes, your application may prefer higher consistency to make sure that
+a large number of replica nodes get those writes successfully. For some reads, your application may prefer higher availability allowing 
+the reads to be served by a small number of replicas making it possible to read even when many replicas are down. 
+We will soon demonstrate how consistency can be tuned using *consistency levels* and discuss how to choose consistency levels 
+to meet your use case requirements.
 
-To create a keyspace, Cassandra Query Language has the `CREATE KEYSPACE` statement with the following simplified syntax:
-
-<pre class="non-executable-code">
-CREATE KEYSPACE [ IF NOT EXISTS ] keyspace_name
-    WITH REPLICATION = { replication_map };
-</pre>
-
-A *keyspace name* can contain alphanumeric characters and underscores. 
-By default, names are case-insensitive, but case sensitivity can be forced by using double quotation marks around a name.
-
-A *replication map* specifies a data replication strategy and replication factors. 
-`SimpleStrategy` and `NetworkTopologyStrategy` are two available choices for prototyping/learning and production, respectively.
+Our introduction of tunable consistency would not be complete without mentioning *eventual consistency*, the term that refers to replicas becoming consistent or 
+synchronized over time. Since every column value has a write-time timestamp, it is straightforward to differentiate 
+between up-to-date and stale data. Cassandra provides several mechanisms to synchronize replicas, including *anti-entropy repair*, 
+*read repair* and *hinted handoff*. 
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

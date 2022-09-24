@@ -20,36 +20,29 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Cluster, datacenters, racks, nodes</div>
+<div class="step-title">Consistency levels</div>
 
-✅ Use `nodetool` to gather information about the cluster:
+Every write (`INSERT`, `UPDATE`, `DELETE`) or read (`SELECT`) operation in Cassandra is executed with a *consistency level* (CL), which 
+defines how many replicas that are writing or reading data must respond to a request coordinator 
+before the coordinator responds to the client. These are the consistency levels we use in our examples.
 
-```
-docker exec -i -t Cassandra-1 bash -c 'nodetool status'
-```
+| Consistency Level | Description |
+|------------------------|-------------|
+| `ONE`, `TWO`, `THREE`  | One, two and three replicas must respond, respectively |
+| `LOCAL_ONE`            | One replica in the local datacenter must respond | 
+| `QUORUM`               | A majority (n/2 + 1) of the replicas must respond |
+| `LOCAL_QUORUM`         | A majority (n/2 + 1) of the replicas in the local datacenter must respond |
+| `EACH_QUORUM`          | A majority (n/2 + 1) of the replicas in each datacenter must respond |
 
-If the cluster only has one node in datacenter `DC-West`, **wait for the second node in datacenter `DC-East` to join** and run `nodetool status` again. The output should be similar to:
+It is important to understand that write operations are always sent to all replicas. The write consistency level 
+only controls how many responses the request coordinator waits for before responding to the client.
+For read operations, the coordinator generally only issues read requests to enough replicas 
+to satisfy the read consistency level. However, if the selected replicas are slow to respond, the read request 
+may be forwarded to additional replicas.
 
-<pre class = >
-Datacenter: DC-East
-===================
-Status=Up/Down
-|/ State=Normal/Leaving/Joining/Moving
---  Address     Load       Tokens  Owns (effective)  Host ID                               Rack 
-UN  172.17.0.3  38.05 KiB  16      100.0%            e5eb2dda-ed95-4081-9f45-f3903cd21a23  rack1
-
-Datacenter: DC-West
-===================
-Status=Up/Down
-|/ State=Normal/Leaving/Joining/Moving
---  Address     Load       Tokens  Owns (effective)  Host ID                               Rack 
-UN  172.17.0.2  74.12 KiB  16      100.0%            bc1c6aa2-b3fd-45a6-8e62-db4d420fbfdc  rack1
-</pre>
-
-
-Take a note of the datacenter names and how many nodes are in each datacenter. 
-Since the cluster has only two nodes, we can have at most two replicas. 
-In a real-life production cluster, you can usually expect to have 3 or more nodes per datacenter and replication factors of 3 or higher.
+Finally, note that there are also CLs `ALL` and `ANY`, which represent the extreme cases. `ALL` requires all replicas to respond and 
+`ANY` can be used for writes when either one replica responds or zero replicas respond and the coordinator stores a hint. You should avoid using 
+these consistency levels in production. There are also CLs `SERIAL` and `LOCAL_SERIAL` that are used with lightweight transactions.
 
 
 <!-- NAVIGATION -->

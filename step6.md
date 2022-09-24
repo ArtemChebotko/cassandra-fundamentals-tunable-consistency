@@ -20,16 +20,72 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">How many replicas do you need?</div>
+<div class="step-title">ONE, TWO, THREE, LOCAL_ONE</div>
 
-Having `3` replicas per datacenter is a good starting point for 
-relatively small clusters. As the number of nodes in a datacenter becomes larger, 
-a higher replication factor may become a better choice.
+Let's experiment with these consistency levels and see why 
+they can or cannot be satisfied.
+ 
+✅ Add a row using CL `ONE`:
+```
+CONSISTENCY ONE;
+INSERT INTO users (email, name, age, date_joined) 
+VALUES ('joe@datastax.com', 'Joe', 25, '2020-01-01');
+```
+CL `ONE` was satisfied by one of the two nodes in the cluster.
 
-The number of replicas can affect consistency, availability, latency and throughput.
-Increasing a replication factor improves availability as it becomes possible to tolerate 
-more replica failures. Also, a larger set of replicas can serve more concurrent requests 
-and result in better response times. 
+
+✅ Add a row using CL `TWO`:
+<details>
+  <summary>Solution</summary>
+
+```
+CONSISTENCY TWO;
+INSERT INTO users (email, name, age, date_joined) 
+VALUES ('jen@datastax.com', 'Jen', 27, '2020-01-01');
+```
+
+CL `TWO` was satisfied by the two nodes in the cluster.
+
+</details>
+
+<br/>
+
+✅ Add a row using CL `THREE`:
+<details>
+  <summary>Solution</summary>
+
+```
+CONSISTENCY THREE;
+INSERT INTO users (email, name, age, date_joined) 
+VALUES ('art@datastax.com', 'Art', 33, '2020-05-04');
+```
+
+CL `THREE` could not be satisfied because the cluster does not have three replicas to respond.
+
+</details>
+
+<br/>
+
+✅ Add a row using CL `LOCAL_ONE`:
+<details>
+  <summary>Solution</summary>
+
+```
+CONSISTENCY LOCAL_ONE;
+INSERT INTO users (email, name, age, date_joined) 
+VALUES ('jim@datastax.com', 'Jim', 31, '2020-05-07');
+```
+
+CL `LOCAL_ONE` was satisfied by the node in our local datacenter *DC-London*.
+
+</details>
+
+<br/>
+
+✅ Retrieve all rows from the table:
+```
+CONSISTENCY ONE; SELECT * FROM users;
+```
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

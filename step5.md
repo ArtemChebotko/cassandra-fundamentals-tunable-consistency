@@ -20,34 +20,21 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Keyspaces with NetworkTopologyStrategy</div>
+<div class="step-title">Access and set a consistency level</div>
 
-✅ Create a keyspace with name `production_keyspace_1` that uses `NetworkTopologyStrategy` and a replication factor of `1` for `DC-West`:
+The CQL shell has the `CONSISTENCY` command to both access and set a consistency level for 
+read and write operations. When you write your own application using a driver, there will be a way to 
+set a consistency level dynamically, too.
 
+✅ Get the current consistency level:
 ```
-CREATE KEYSPACE production_keyspace_1
-WITH replication = {'class': 'NetworkTopologyStrategy', 
-                    'DC-West': 1};
-```
-
-With `NetworkTopologyStrategy`, a replication factor is specified for each datacenter separately. 
-In the above example, the `DC-West` datacenter will have a single copy of data. 
-Not replicating data to `DC-East` could be a valid use case but usually there will be replicas in each datacenter. 
-
-✅ Create a keyspace with name `production_keyspace_2` that uses `NetworkTopologyStrategy` 
-and `1` replica in each datacenter:
-
-<details>
-  <summary>Solution</summary>
-
-```
-CREATE KEYSPACE production_keyspace_2
-WITH replication = {'class': 'NetworkTopologyStrategy', 
-                    'DC-West': 1,
-                    'DC-East': 1};
+CONSISTENCY;
 ```
 
-</details>
+✅ Set the consistency level:
+```
+CONSISTENCY LOCAL_ONE;
+```
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

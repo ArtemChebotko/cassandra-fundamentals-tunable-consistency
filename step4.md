@@ -29,7 +29,7 @@ situation as if we lost two replicas in *DC-Paris* due to a natural disaster ...
 
 ✅ Create the keyspace:
 ```
-CREATE KEYSPACE ks_tunable_consistency
+CREATE KEYSPACE IF NOT EXISTS ks_tunable_consistency
 WITH replication = {
   'class': 'NetworkTopologyStrategy', 
   'DC-London': 1,
@@ -40,7 +40,7 @@ USE ks_tunable_consistency;
 
 ✅ Create the table:
 ```
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   email TEXT,
   name TEXT,
   age INT,
